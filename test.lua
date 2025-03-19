@@ -1,5 +1,5 @@
 local p_classcode = "SPBFUT"
-local p_seccode = "MMH5"
+local p_seccode = "MMM5"
 local quantity = 1
 local threshold = 30
 
@@ -23,24 +23,24 @@ local function buy(quantity)
     local price = get_bbid(p_classcode,p_seccode)
     price = string.format("%.2f", price)
     local result = sendTransaction({
-        CLASSCODE = 'SPBFUT',
-        SECCODE = 'MMH5',
+        CLASSCODE = p_classcode,
+        SECCODE = p_seccode,
         ACTION = "NEW_ORDER",
         OPERATION = "B",
         PRICE = tostring(price),
         QUANTITY = tostring(quantity),
-        TRANS_ID="7",
+        TRANS_ID="9",
         ACCOUNT="SPBFUT17OVS",
     })
-    
+    -- message('r '..result)
 end
 
 local function sell(quantity)
     local price = get_bask(p_classcode,p_seccode)
     price = string.format("%.2f", price)
     local result = sendTransaction({
-        CLASSCODE = 'SPBFUT',
-        SECCODE = 'MMH5',
+        CLASSCODE = p_classcode,
+        SECCODE = p_seccode,
         ACTION = "NEW_ORDER",
         OPERATION = "S",
         PRICE = tostring(price),
@@ -59,7 +59,7 @@ local function kill_order(num_order)
         ORDER_KEY = tostring(num_order),
         TRANS_ID="8",
     })
-    message(transaction_id) 
+    -- message(transaction_id) 
 end
 
 local function func(t)
@@ -129,6 +129,9 @@ local function get_action()
     return 'None'
 
 end
+-- local lots = get_lots()
+-- buy(quantity+math.abs(lots))
+-- message('a '..quantity+math.abs(lots))
 local is_run = true
 function main()
     while is_run do
@@ -136,26 +139,18 @@ function main()
         local action = get_action()
         if action ~= 'None' then 
             local lots = get_lots()
-            -- message('action '..action..' lots '..lots)
+            message('action '..action..' lots '..lots)
             if action == 'long_pw' then
                 if lots > 0 then
                     goto continue
                 else
-                    if lots == 0 then
-                        buy(quantity)
-                    else
-                        buy(quantity+math.abs(lots))
-                    end
+                    buy(quantity+math.abs(lots))
                 end
             else
                 if lots < 0 then
                     goto continue
                 else
-                    if lots == 0 then
-                        sell(quantity)
-                    else
-                        sell(quantity+lots)
-                    end
+                    sell(quantity+lots)
                 end
                 
             end
